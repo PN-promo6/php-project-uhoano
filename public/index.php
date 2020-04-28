@@ -1,3 +1,50 @@
+<?php
+require("../vendor/autoload.php");
+
+use Entity\Post;
+use Entity\User;
+
+$usr1 = new User();
+
+$usr1->id = 1;
+$usr1->nickname = "Juan Carlos";
+$usr1->password = "azerty";
+$usr1->email = "juan.carlos@gmail.com";
+
+$post1 = new Post();
+
+$post1->id = 1;
+$post1->nickname = "toto";
+$post1->category = "Meuble";
+$post1->description = "Table epoxy";
+$post1->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
+$post1->date = time();
+$post1->user = $usr1;
+
+$post2 = new Post();
+
+$post2->id = 2;
+$post2->nickname = "tata";
+$post2->category = "Sculture";
+$post2->description = "Table epoxy";
+$post2->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
+$post2->date = time();
+$post2->user = $usr1;
+
+$post3 = new Post();
+
+$post3->id = 2;
+$post3->nickname = "titi";
+$post3->category = "Azerty";
+$post3->description = "Table epoxy";
+$post3->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
+$post3->date = time();
+$post2->user = $usr1;
+
+$posts = array($post1, $post2, $post3);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +59,7 @@
 </head>
 
 <body>
+
   <!-- NAV BAR START -->
 
   <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -100,37 +148,45 @@
     <div class="py-5 bg-light">
       <div class="container">
         <div class="row">
-          <div class="col-md-5">
-            <!-- CARD START -->
-            <div class="card mb-4 shadow-sm">
-              <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+          <?php
+          foreach ($posts as $post) {
+          ?>
+
+            <div class="col-md-4">
+              <!-- CARD START -->
+              <div class="card mb-4 shadow-sm">
+                <img src="<?php echo $post->url_image ?>" alt="">
                 <title>Placeholder</title>
                 <rect width="100%" height="100%" fill="#55595c" />
                 <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                  Thumbnail
+                  <?php echo $post->category; ?>
                 </text>
-              </svg>
-              <div class="card-body">
-                <p class="card-text">
-                  This is a wider card with supporting text below as a natural
-                  lead-in to additional content. This content is a little bit
-                  longer.
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-secondary">
-                      View
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">
-                      Edit
-                    </button>
+                </svg>
+                <div class="card-body">
+                  <p class="card-text">
+                    <?php echo $post->description; ?>
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary">
+                        View
+                      </button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary">
+                        Edit
+                      </button>
+                    </div>
+                    <small class="text-muted">9 mins</small>
                   </div>
-                  <small class="text-muted">9 mins</small>
                 </div>
               </div>
+              <!-- CARD END  -->
             </div>
-            <!-- CARD END  -->
-          </div>
+
+          <?php
+            $i++;
+            if ($i % 3 == 0) {
+            }
+          } ?>
         </div>
       </div>
     </div>
