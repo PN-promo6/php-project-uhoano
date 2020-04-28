@@ -1,47 +1,62 @@
 <?php
-require("../vendor/autoload.php");
+// require("../vendor/autoload.php");
+
+// use Entity\Post;
+// use Entity\User;
+
+// $usr1 = new User();
+
+// $usr1->id = 1;
+// $usr1->nickname = "Juan Carlos";
+// $usr1->password = "azerty";
+// $usr1->email = "juan.carlos@gmail.com";
+
+// $post1 = new Post();
+
+// $post1->id = 1;
+// $post1->nickname = "toto";
+// $post1->category = "Meuble";
+// $post1->description = "Table epoxy";
+// $post1->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
+// $post1->date = time();
+// $post1->user = $usr1;
+
+// $post2 = new Post();
+
+// $post2->id = 2;
+// $post2->nickname = "tata";
+// $post2->category = "Sculture";
+// $post2->description = "Table epoxy";
+// $post2->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
+// $post2->date = time();
+// $post2->user = $usr1;
+
+// $post3 = new Post();
+
+// $post3->id = 2;
+// $post3->nickname = "titi";
+// $post3->category = "Azerty";
+// $post3->description = "Table epoxy";
+// $post3->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
+// $post3->date = time();
+// $post2->user = $usr1;
+
+// $posts = array($post1, $post2, $post3);
 
 use Entity\Post;
-use Entity\User;
+use ludk\Persistence\ORM;
 
-$usr1 = new User();
+require __DIR__ . '/../vendor/autoload.php';
 
-$usr1->id = 1;
-$usr1->nickname = "Juan Carlos";
-$usr1->password = "azerty";
-$usr1->email = "juan.carlos@gmail.com";
+$orm = new ORM(__DIR__ . '/../Resources');
+$postRepo = $orm->getRepository(Post::class);
+$posts = $postRepo->findAll();
 
-$post1 = new Post();
-
-$post1->id = 1;
-$post1->nickname = "toto";
-$post1->category = "Meuble";
-$post1->description = "Table epoxy";
-$post1->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
-$post1->date = time();
-$post1->user = $usr1;
-
-$post2 = new Post();
-
-$post2->id = 2;
-$post2->nickname = "tata";
-$post2->category = "Sculture";
-$post2->description = "Table epoxy";
-$post2->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
-$post2->date = time();
-$post2->user = $usr1;
-
-$post3 = new Post();
-
-$post3->id = 2;
-$post3->nickname = "titi";
-$post3->category = "Azerty";
-$post3->description = "Table epoxy";
-$post3->url_image = "https://image.made-in-china.com/202f0j10zwQtmDTKZFuZ/High-Transparency-Epoxy-Resin-for-River-Table-Casting.jpg";
-$post3->date = time();
-$post2->user = $usr1;
-
-$posts = array($post1, $post2, $post3);
+if (isset($_GET['search'])) {
+  $posts = $postRepo->findBy(array("nickname" => $_GET['search']));
+} else {
+  $posts = $postRepo->findAll();
+}
 
 ?>
 
@@ -155,7 +170,7 @@ $posts = array($post1, $post2, $post3);
             <div class="col-md-4">
               <!-- CARD START -->
               <div class="card mb-4 shadow-sm">
-                <img src="<?php echo $post->url_image ?>" alt="">
+                <img src="<?php echo $post->url_img ?>" alt="">
                 <title>Placeholder</title>
                 <rect width="100%" height="100%" fill="#55595c" />
                 <text x="50%" y="50%" fill="#eceeef" dy=".3em">
@@ -183,9 +198,6 @@ $posts = array($post1, $post2, $post3);
             </div>
 
           <?php
-            $i++;
-            if ($i % 3 == 0) {
-            }
           } ?>
         </div>
       </div>
