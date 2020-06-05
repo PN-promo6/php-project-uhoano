@@ -36,16 +36,16 @@
                     if (isset($_SESSION['user'])) {
                     ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="?action=logout" role="button">Logout</a>
+                            <a class="nav-link" href="/logout" role="button">Logout</a>
                         </li>
                     <?php
                     } else {
                     ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="?action=login" role="button">Login</a>
+                            <a class="nav-link" href="/login" role="button">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="?action=register" role="button">Sign Up</a>
+                            <a class="nav-link" href="/register" role="button">Sign Up</a>
                         </li>
                     <?php
                     }
@@ -58,7 +58,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <form class="form-signin" method="POST" action="?action=register">
+                <form class="form-signin" method="POST" action="/register">
                     <h2 class="form-signin-heading text-center mb-4">Registration</h2>
                     <?php
                     if (isset($errorMsg)) {
