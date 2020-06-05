@@ -88,7 +88,7 @@ switch ($action) {
         header('Location:/?action=display');
       }
     } else {
-      include "../templates/registrer.php";
+      include "../templates/register.php";
     }
     break;
 
@@ -124,7 +124,7 @@ switch ($action) {
     if (!isset($_SESSION['user'])) {
       header('Location:/?action=display');
     } else {
-      $posts = $postsRepo->findAll();
+      $posts = $postRepo->findAll();
       if (
         isset($_POST['category']) && isset($_POST['description']) && isset($_POST['url_image'])
       ) {
@@ -139,7 +139,6 @@ switch ($action) {
         if ($errorMsg) {
           include "../templates/new.php";
         } else {
-          $posts = $postRepo->find($_POST['post']);
           $newPost = new Post();
           $newPost->category = $_POST['category'];
           $newPost->description = $_POST['description'];
