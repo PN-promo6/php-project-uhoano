@@ -51,6 +51,7 @@ use Entity\User;
 use ludk\Persistence\ORM;
 
 $orm = new ORM(__DIR__ . '/../Resources');
+$userRepo = $orm->getRepository(User::class);
 $postRepo = $orm->getRepository(Post::class);
 $posts = $postRepo->findAll();
 $post0 = $posts[0];
@@ -61,18 +62,100 @@ $manager = $orm->getManager();
 // $manager->persist($post1);
 // $manager->flush();
 
-
-
 $action = $_GET["action"] ?? "display";
 switch ($action) {
   case 'register':
+    if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['passwordRetype'])) {
+      $isUserAvailable = $userRepo->findBy(array("nickname" => $_POST['username']));
+      $errorMsg = NULL;
+      if (count($isUserAvailable) > 0) {
+        $errorMsg = "Nickname already used.";
+      } else if ($_POST['password'] != $_POST['passwordRetype']) {
+        $errorMsg = "Passwords are not the same.";
+      } else if (strlen(trim($_POST['password'])) < 8) {
+        $errorMsg = "Your password should have at least 8 characters.";
+      } else if (strlen(trim($_POST['username'])) < 4) {
+        $errorMsg = "Your nickame should have at least 4 characters.";
+      }
+      if ($errorMsg) {
+        include "../templates/register.php";
+      } else {
+        $newUser = new User();
+        $newUser->nickname = $_POST['username'];
+        $newUser->password = $_POST['password'];
+        $manager->persist($newUser);
+        $manager->flush();
+        header('Location:/?action=display');
+      }
+    } else {
+      include "../templates/registrer.php";
+    }
     break;
+
   case 'logout':
+    if (isset($_SESSION['user'])) {
+      unset($_SESSION['user']);
+    }
+    header('Location:/?action=display');
     break;
+
   case 'login':
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+      $usersWithThisLogin = $userRepo->findBy(array("nickname" => $_POST['username']));
+      if (count($usersWithThisLogin) == 1) {
+        $firstUserWithThisLogin = $usersWithThisLogin[0];
+        if ($firstUserWithThisLogin->password != ($_POST['password'])) {
+          $errorMsg = "Wrong password.";
+          include "../templates/login.php";
+        } else {
+          $_SESSION['user'] = $usersWithThisLogin[0];
+          header('Location:/?action=display');
+        }
+      } else {
+        $errorMsg = "Nickname doesn't exist.";
+        include "../templates/login.php";
+      }
+    } else {
+      include "../templates/login.php";
+    }
     break;
+
   case 'new':
+    if (!isset($_SESSION['user'])) {
+      header('Location:/?action=display');
+    } else {
+      $posts = $postsRepo->findAll();
+      if (
+        isset($_POST['category']) && isset($_POST['description']) && isset($_POST['url_image'])
+      ) {
+        $errorMsg = NULL;
+        if ($_POST['category'] == "0") {
+          $errorMsg = "Choose a category.";
+        } else if (empty($_POST['description'])) {
+          $errorMsg = "Put a description.";
+        } else if (empty($_POST['url_image'])) {
+          $errorMsg = "Put a url image.";
+        }
+        if ($errorMsg) {
+          include "../templates/new.php";
+        } else {
+          $posts = $postRepo->find($_POST['post']);
+          $newPost = new Post();
+          $newPost->category = $_POST['category'];
+          $newPost->description = $_POST['description'];
+          $newPost->url_img = $_POST['url_image'];
+
+          $newPost->user = $_SESSION['user'];
+          $manager->persist($newPost);
+          $manager->flush();
+          header('Location:/?action=display');
+        }
+      } else {
+        include "../templates/new.php";
+      }
+    }
     break;
+
   case 'display':
   default:
     $posts = array();
