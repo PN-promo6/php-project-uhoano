@@ -49,6 +49,8 @@ session_start();
 use Entity\Post;
 use Entity\User;
 use ludk\Persistence\ORM;
+use Controller\AuthController;
+use Controller\HomeController;
 
 $orm = new ORM(__DIR__ . '/../Resources');
 $userRepo = $orm->getRepository(User::class);
@@ -65,59 +67,18 @@ $manager = $orm->getManager();
 $action = $_GET["action"] ?? "display";
 switch ($action) {
   case 'register':
-    if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['passwordRetype'])) {
-      $isUserAvailable = $userRepo->findBy(array("nickname" => $_POST['username']));
-      $errorMsg = NULL;
-      if (count($isUserAvailable) > 0) {
-        $errorMsg = "Nickname already used.";
-      } else if ($_POST['password'] != $_POST['passwordRetype']) {
-        $errorMsg = "Passwords are not the same.";
-      } else if (strlen(trim($_POST['password'])) < 8) {
-        $errorMsg = "Your password should have at least 8 characters.";
-      } else if (strlen(trim($_POST['username'])) < 4) {
-        $errorMsg = "Your nickame should have at least 4 characters.";
-      }
-      if ($errorMsg) {
-        include "../templates/register.php";
-      } else {
-        $newUser = new User();
-        $newUser->nickname = $_POST['username'];
-        $newUser->password = $_POST['password'];
-        $manager->persist($newUser);
-        $manager->flush();
-        header('Location:/?action=display');
-      }
-    } else {
-      include "../templates/register.php";
-    }
+    $controller = new AuthController();
+    $controller->register();
     break;
 
   case 'logout':
-    if (isset($_SESSION['user'])) {
-      unset($_SESSION['user']);
-    }
-    header('Location:/?action=display');
+    $controller = new AuthController();
+    $controller->logout();
     break;
 
   case 'login':
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-      $usersWithThisLogin = $userRepo->findBy(array("nickname" => $_POST['username']));
-      if (count($usersWithThisLogin) == 1) {
-        $firstUserWithThisLogin = $usersWithThisLogin[0];
-        if ($firstUserWithThisLogin->password != ($_POST['password'])) {
-          $errorMsg = "Wrong password.";
-          include "../templates/login.php";
-        } else {
-          $_SESSION['user'] = $usersWithThisLogin[0];
-          header('Location:/?action=display');
-        }
-      } else {
-        $errorMsg = "Nickname doesn't exist.";
-        include "../templates/login.php";
-      }
-    } else {
-      include "../templates/login.php";
-    }
+    $controller = new AuthController();
+    $controller->login();
     break;
 
   case 'new':
@@ -157,25 +118,7 @@ switch ($action) {
 
   case 'display':
   default:
-    $posts = array();
-
-    if (isset($_GET['search'])) {
-      $search = $_GET['search'];
-      if (strpos($search, "@") === 0) {
-        $nickname = substr($search, 1);
-        $userRepo = $orm->getRepository(User::class);
-        $users = $userRepo->findBy(array("nickname" => $nickname));
-
-        if (count($users) == 1) {
-          $user = $users[0];
-          $posts = $postRepo->findBy(array("user" => $user->id));
-        }
-      } else {
-        $posts = $postRepo->findBy(array("nickname" => $_GET['search']));
-      }
-    } else {
-      $posts = $postRepo->findAll();
-    }
-    include "../templates/display.php";
+    $controller = new HomeController();
+    $controller->display();
     break;
 }
