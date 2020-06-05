@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use Entity\User;
+
 class HomeController
 {
     public function display()
